@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  auth:
+    container_name: auth-service
+    build:
+      context: ../
+      dockerfile: docker/django/Dockerfile
+    restart: always
+    command: gunicorn auth.wsgi:application --workers 2 --bind 0.0.0.0:8000
+    volumes:
+      - ../:/app
+      - auth_media_volume:/media/
+    ports:
+      - "8080:8000"
+    env_file: ../.env
+    depends_on:
+      - mysql
+    networks:
+      auth_nginx_network:
+
+  nginx:
+    container_name: auth.proxy
+    build: ./nginx
+    volumes:
+      - ../static:/app/static/
+      - auth_media_volume:/media/
+    ports:
+      - "8088:80"
+    depends_on:
+      - auth
+    networks:
+      auth_nginx_network:
+      
+  mysql:
+    container_name: auth.mysql-service
+    build:
+      context: ../
+      dockerfile: ./docker/mysql/Dockerfile
+    volumes:
+      - auth_db_data:/var/lib/mysql
+    restart: unless-stopped
+    env_file: ../.env
+    ports:
+      - "3307:3306"
+    networks:
+      auth_nginx_network:
+
+volumes:
+  static_volume:
+  auth_media_volume:
+  auth_db_data:
+
+networks:
+  auth_nginx_network:
+    driver: bridge
