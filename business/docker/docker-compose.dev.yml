@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  business:
+    container_name: business-service
+    build:
+      context: ../
+      dockerfile: docker/django/Dockerfile
+    restart: always
+    command: gunicorn business.wsgi:application --workers 2 --bind 0.0.0.0:8000
+    volumes:
+      - ../:/app
+      - business_media_volume:/media/
+    ports:
+      - "8880:8000"
+    env_file: ../.env
+    depends_on:
+      - mysql-business
+    networks:
+      business_nginx_network:
+
+  nginx-business:
+    container_name: business.proxy
+    build: ./nginx
+    volumes:
+      - ../static:/app/static/
+      - business_media_volume:/media/
+    ports:
+      - "8888:80"
+    depends_on:
+      - business
+    networks:
+      business_nginx_network:
+      
+  mysql-business:
+    container_name: business.mysql-service
+    build:
+      context: ../
+      dockerfile: ./docker/mysql/Dockerfile
+    volumes:
+      - business_db_data:/var/lib/mysql
+    restart: unless-stopped
+    env_file: ../.env
+    ports:
+      - "3337:3306"
+    networks:
+      business_nginx_network:
+
+volumes:
+  static_volume:
+  business_media_volume:
+  business_db_data:
+
+networks:
+  business_nginx_network:
+    driver: bridge
