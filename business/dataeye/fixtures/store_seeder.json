@@ -34,7 +34,7 @@
     },
     {
         "model": "dataeye.store",
-        "pk": 3,
+        "pk": 4,
         "fields": {
             "name": "John Store 4",
             "lat": -79.132557,
@@ -45,7 +45,7 @@
     },
     {
         "model": "dataeye.store",
-        "pk": 3,
+        "pk": 5,
         "fields": {
             "name": "John Store 5",
             "lat": 47.244262,
@@ -56,7 +56,7 @@
     },
     {
         "model": "dataeye.store",
-        "pk": 3,
+        "pk": 6,
         "fields": {
             "name": "John Store 6",
             "lat": 18.6986795,
@@ -67,7 +67,7 @@
     },
     {
         "model": "dataeye.store",
-        "pk": 3,
+        "pk": 7,
         "fields": {
             "name": "John Store 7",
             "lat": 37.935520,

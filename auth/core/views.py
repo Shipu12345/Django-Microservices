@@ -11,7 +11,7 @@ from .serializers import RegistrationSerializer, UserDetailsSerializer
 from rest_framework.permissions import (
     IsAuthenticated,
 )
-
+from rest_framework_simplejwt import views as jwt_views
 from .utils import get_tokens_for_user
 from rest_framework.response import Response
 from .models import User
