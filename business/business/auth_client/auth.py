@@ -1,6 +1,7 @@
 import os
 import requests
 from django.http import HttpRequest
+from rest_framework import status
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header
 from django.utils.encoding import smart_str
@@ -8,15 +9,18 @@ from django.utils.encoding import smart_str
 
 class AuthClient:
     def __init__(self, request) -> None:
-        self.auth_url = os.getenv("AUTH_URL", "http://0.0.0.0:8080/api/token/verify/")
+        self.auth_url = os.getenv("AUTH_URL", "0.0.0.0:8080/api/token/verify/")
         self.request = request
 
     def authenticate(self) -> bool:
         token = self.get_jwt_value(self.request)
         payload_data = {"token": token}
         response = requests.post(self.auth_url, data=payload_data)
-        # content = response.content
-        # print(response, content)
+        content = response.content
+        print(response)
+        if status.HTTP_200_OK != response.status_code:
+            return False
+        return True
 
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
